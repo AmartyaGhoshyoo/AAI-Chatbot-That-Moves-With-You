@@ -1,21 +1,29 @@
-import time, random
-from duckduckgo_search import DDGS
+from dotenv import load_dotenv
+import os
+# FIRECRAWL_API_KEY="fc-ec73eb1678be49b8a4d19ad696818c74"
+from crewai import Agent,Crew,Task,LLM
+# from crewai_tools import SerperDevTool
+from crewai_tools import (FirecrawlSearchTool,SerperDevTool)
 
-def fetch_top_url(query: str, site: str = None, retries: int = 3):
-    if site:
-        query = f"{query} site:{site}"
+from Agent_Talking import url_fetcher
 
-    for attempt in range(retries):
-        try:
-            with DDGS() as ddgs:
-                results = ddgs.text(query, max_results=1)
-                for r in results:
-                    return r["href"]
-        except Exception as e:
-            print(f"Attempt {attempt+1} failed: {e}")
-            time.sleep(random.randint(3, 7))  # wait a bit before retry
-
-    return None
-
-print(fetch_top_url("child screen timing"))
-print(fetch_top_url("child screen timing", "unicef.org"))
+tool = FirecrawlSearchTool(api_key="fc-ec73eb1678be49b8a4d19ad696818c74",config={"limit": 5})
+result=tool.run(query="Find me relevant blogs on child screen timing from parentune ")
+print(result)
+url_fetcher=FirecrawlSearchTool(api_key="fc-ec73eb1678be49b8a4d19ad696818c74",config={"limit": 5})
+web_search=SerperDevTool()
+# url_fetcher_agent=Agent(
+#     goal:'Crawl through web'
+# )
+url_fetcher_agent=Agent(
+    role="Fetching websites urls"
+    goal="Crawl the websites relevant to the ueser query",
+    backstory="You are an web crawler which always find the most relevant urls and it's content based on the user's query",
+    verbose=True,
+    tools=[url_fetcher]
+)
+verify_agent=Agent(
+    role="Verifier for urls",
+    goal='You need to check the urls output from the url_fetcher_agent that which one is more relevant to the ueser query',
+    backstory="You could match the query and output of the previous agent to very urls "
+)
