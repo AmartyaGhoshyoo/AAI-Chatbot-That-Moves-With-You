@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from Agent_Talking_Testing import run_agent_query
+from Agent_Talking_Testing_2 import run_agent_query
 
 app = FastAPI()
 
@@ -15,13 +15,14 @@ app.add_middleware(
 
 class ChatRequest(BaseModel):
     message: str
+    current_url: str = None
 
 class ChatResponse(BaseModel):
     text: str
 
 @app.post("/chat", response_model=ChatResponse)
 def chat(req: ChatRequest):
-    result = run_agent_query(req.message)
+    result = run_agent_query(req.message, req.current_url)
     return ChatResponse(text=result)
 
 if __name__ == "__main__":

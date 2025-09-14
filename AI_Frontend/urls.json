@@ -1,0 +1,12 @@
+[
+  { "url": "/" },
+  { "url": "/docs" },
+  { "url": "/docs/[slug]" },
+  { "url": "/reader" },
+  { "url": "#top" },
+  { "url": "#features" },
+  { "url": "#showcase" },
+  { "url": "#pricing" },
+  { "url": "#faq" }
+]
+

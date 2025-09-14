@@ -200,6 +200,39 @@ const ChatForm = () => {
         saveMessages(messages);
     }, [messages]);
 
+    // Track page navigation and send to agent
+    // useEffect(() => {
+    //     const trackPageChange = async () => {
+    //         try {
+    //             await fetch("http://127.0.0.1:8001/chat", {
+    //                 method: "POST",
+    //                 headers: { "Content-Type": "application/json" },
+    //                 body: JSON.stringify({ 
+    //                     message: "User navigated to a new page",
+    //                     current_url: window.location.href 
+    //                 })
+    //             });
+    //         } catch (e) {
+    //             console.log("Page tracking failed:", e);
+    //         }
+    //     };
+
+    //     // Track initial page load
+    //     trackPageChange();
+
+    //     // Track route changes (Next.js router events)
+    //     const handleRouteChange = () => {
+    //         setTimeout(trackPageChange, 100);
+    //     };
+
+    //     // Listen for popstate (back/forward navigation)
+    //     window.addEventListener('popstate', handleRouteChange);
+        
+    //     return () => {
+    //         window.removeEventListener('popstate', handleRouteChange);
+    //     };
+    // }, []);
+
     const extractUrl = (text: string): string | null => {
         const m = text.match(/https?:\/\/\S+/);
         return m ? m[0] : null;
@@ -220,19 +253,84 @@ const ChatForm = () => {
         setInputValue("");
 
         try {
+            let rawUrl = "";
+            const params = new URLSearchParams(window.location.search);
+            
+            if (params.has("url")) {
+              rawUrl = decodeURIComponent(params.get("url") || "");
+            } else {
+              rawUrl = window.location.href; // already raw
+            }
+            
             const res = await fetch("http://127.0.0.1:8001/chat", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ message: userText })
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ 
+                message: userText,
+                current_url: rawUrl
+              })
             });
             const data = await res.json();
             const botText = typeof data.text === 'string' ? data.text : JSON.stringify(data);
+            console.log(botText)
 
-            const maybeUrl = extractUrl(botText);
+            // Try JSON {"best_url": "..."} first, then fallback to regex in text
+            let urlFromJson: string | null = null;
+            let description: string | null = null;
+            
+            // If backend sends JSON
+            if (data.best_url || data.description) {
+                urlFromJson = data.best_url ?? null;
+                description = data.description ?? null;
+            } else {
+                // Fallback: treat as text
+                const botText = typeof data.text === 'string' ? data.text : JSON.stringify(data);
+                try {
+                    const parsed = JSON.parse(botText);
+                    if (parsed && typeof parsed.best_url === 'string') {
+                        urlFromJson = parsed.best_url;
+                    }
+                    if (parsed && typeof parsed.description === 'string') {
+                        description = parsed.description;
+                    }
+                } catch (_) {
+                    // not JSON, ignore
+                }
+            }
+
+            const maybeUrl = urlFromJson;
             if (maybeUrl) {
-                // Redirect to reader page without adding a bot message
-                const urlParam = encodeURIComponent(maybeUrl);
-                router.push(`/reader?url=${urlParam}`);
+                try {
+                    const parsed = new URL(maybeUrl, window.location.origin);
+                    if (parsed.origin === window.location.origin) {
+                        // Internal link → SPA navigate
+                        router.push(parsed.pathname + parsed.search + parsed.hash);
+                    } else {
+                        // External link → reader
+                        const params = new URLSearchParams({ url: parsed.toString() });
+                        router.push(`/reader?${params.toString()}`);
+                    }
+            
+                    // ✅ Use description directly here
+                    const botResponse: Message = {
+                        id: (Date.now() + 1).toString(),
+                        text: description ?? "I’ve taken you to the page. Let me know if you need help understanding anything here.",
+                        timestamp: new Date(),
+                        type: 'bot'
+                    };
+                    setMessages(prev => [...prev, botResponse]);
+                } catch {
+                    // Fallback if URL parsing fails
+                    const params = new URLSearchParams({ url: maybeUrl });
+                    router.push(`/reader?${params.toString()}`);
+                    const botResponse: Message = {
+                        id: (Date.now() + 1).toString(),
+                        text: description ?? "I’ve taken you to the page. Let me know if you need help understanding anything here.",
+                        timestamp: new Date(),
+                        type: 'bot'
+                    };
+                    setMessages(prev => [...prev, botResponse]);
+                }
                 return;
             }
 
