@@ -4,6 +4,7 @@ import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Send, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { div } from "motion/react-client";
 
 interface Message {
     id: string;
@@ -121,7 +122,7 @@ const MessageItem = ({ message }: { message: Message }) => {
 };
 
 // Messages List Component
-const MessagesList = ({ messages }: { messages: Message[] }) => {
+const MessagesList = ({ messages ,isloading}: { messages: Message[],isloading:boolean}) => {
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -137,6 +138,20 @@ const MessagesList = ({ messages }: { messages: Message[] }) => {
             {messages.map((message) => (
                 <MessageItem key={message.id} message={message} />
             ))}
+         {isloading && (
+  <div className="flex space-x-3 p-3">
+    {/* Chat avatar placeholder */}
+    <div className="w-10 h-10 rounded-full bg-gray-300 animate-pulse"></div>
+            
+    {/* Chat bubble placeholder */}
+    <div className="flex-1 space-y-2">
+      <div className="h-3 w-3/4 rounded bg-gray-300 animate-pulse"></div>
+      <div className="h-3 w-1/2 rounded bg-gray-300 animate-pulse"></div>
+      <div className="h-3 w-2/3 rounded bg-gray-300 animate-pulse"></div>
+    </div>
+  </div>
+)}
+
             <div ref={messagesEndRef} />
         </div>
     );
@@ -188,6 +203,7 @@ const ChatForm = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [inputValue, setInputValue] = useState("");
     const { loadMessages, saveMessages } = useLocalStorage("elevenlabs-chat-messages");
+    const [isloading,setIsloading] = useState(false);
     const router = useRouter();
 
     // Load messages on mount
@@ -253,6 +269,8 @@ const ChatForm = () => {
         setInputValue("");
 
         try {
+
+            setIsloading(true);
             let rawUrl = "";
             const params = new URLSearchParams(window.location.search);
             
@@ -272,6 +290,7 @@ const ChatForm = () => {
             });
             const data = await res.json();
             const botText = typeof data.text === 'string' ? data.text : JSON.stringify(data);
+            setIsloading(false);
             console.log(botText)
 
             // Try JSON {"best_url": "..."} first, then fallback to regex in text
@@ -359,7 +378,7 @@ const ChatForm = () => {
     return (
         <div className="w-full h-full bg-black text-white flex flex-col">
             <ChatHeader onClear={handleClearMessages} />
-            <MessagesList messages={messages} />
+            <MessagesList messages={messages} isloading={isloading}/>
             <ChatInput
                 value={inputValue}
                 onChange={setInputValue}
