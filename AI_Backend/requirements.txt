@@ -1,5 +1,7 @@
+crewai
 openai==1.109.1
-crewai_tools==0.74.1
+crewai_tools
 fastapi==0.117.1
+psycopg2-binary==2.9.10
 sqlalchemy==2.0.44
 embedchain==0.1.128
