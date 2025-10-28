@@ -4,195 +4,25 @@ from pydantic import BaseModel, Field
 from crewai.tools import BaseTool
 from firecrawl_search_tool_modified import FirecrawlSearchTool
 import json
-import webbrowser
 from typing import Type
-from datetime import datetime
 import os 
+from firecrawl import Firecrawl
 from dotenv import load_dotenv
 load_dotenv()
 os.environ['OPENAI_API_KEY']=os.getenv("OPENAI_API_KEY")
 client = OpenAI()
 history=[]
 import datetime
-
-# Current date and time
 now = datetime.datetime.now()
-print("Now:", now)
-
-
-import os
-from dotenv import load_dotenv
 from crewai import Agent,Crew,Task,LLM
-from rich.console import Console
-from rich.markdown import Markdown 
 from embedchain import App
-load_dotenv()
-from crewai.memory.external.external_memory import ExternalMemory
-
-os.makedirs('AI_Memory_Storage',exist_ok=True)
-os.environ["CREWAI_STORAGE_DIR"] = "/Users/amartyaghosh/Downloads/OpenaAI Hackathon/AI_Memory_Storage"
-
-# class MyCustomTool(BaseTool):
-#     name: str = "Name of my tool"
-#     description: str = "What this tool does. It's vital for effective utilization."
-#     args_schema: Type[BaseModel] = WebPageOpenToolInput
-
-#     def _run(self, argument: str) -> str:
-#         # Your tool's logic here
-#         return "Tool's result"
-class UrlFetchToolInput(BaseModel):
-    """Input schema for MyCustomTool."""
-    query: str = Field(..., description="Mandatory search query you want to use for searching the URL")
-class URLFetcher(BaseTool):
-    name: str = "url_fetcher"
-    description: str = (
-    "Use this tool to **search and retrieve the most relevant blog URL** "
-    "from a curated vector database. Provide a mandatory search query as input, "
-    "and the tool will return the best matching blog link. Always use this tool "
-    "whenever the user requests a blog, article, or resource URL. or some article to read"
-)
-    args_schema: Type[BaseModel] = UrlFetchToolInput
-    def _run(self,query:str)->str:
-        
-        config = {
-            "llm": {
-                "provider": "openai",
-                "config": {
-                    "model": "gpt-4.1"
-                }
-            },
-            "embedder": {
-                "provider": "openai",
-                "config": {
-                    "model": "text-embedding-3-small"
-                }
-            },
-            'chunker': {
-                'chunk_size': 2000,
-            },
-            'vectordb': {
-                'provider': 'chroma',
-                'config': {
-                    'collection_name': 'full-stack-app',
-                    'dir': 'Blog_URLS',
-                    'allow_reset': True
-                }
-            },
-        }
-        app=App.from_config(config=config)
-        result=app.query(f'fetch the most relevant url of {query}')
-        return result
-    
-class WebPageOpenToolInput(BaseModel):
-    """Input schema for MyCustomTool."""
-    url: str = Field(..., description="Mandatory URL for opening the url")
-class WebpageOpen(BaseTool):
-    name:str='webpage_openner'
-    description:str="This is used to open the fetched url"
-    args_schema: Type[BaseModel] = WebPageOpenToolInput
-    def _run(self,url:str):
-        return url
-        
-
-# url_fetcher=URLFetcher()
-# webpage_opener=WebpageOpen()
-
-    
-
-# llm=LLM(model="gpt-4.1")
-# # Talking = Agent(
-# #     role="Conversational AI Agent",
-# #     goal=(
-# #         "Engage users in natural, context-aware, and human-like conversations, "
-# #         "while adapting tone and depth based on user intent (casual chat, "
-# #         "knowledge queries, or guidance). Ensure responses are helpful, "
-# #         "empathetic, and maintain clarity across diverse topics."
-# #         "You also have the access to the memory for the past conversations"
-# #     ),
-# #     backstory=(
-# #         "The agent is designed as a skilled conversational partner, trained "
-# #         "to handle large volumes of user interactions simultaneously in "
-# #         "a production environment. It has expertise in natural language "
-# #         "understanding, contextual memory management, and adaptive dialogue. "
-# #         "It balances informative responses with engaging communication, "
-# #         "ensuring conversations remain coherent, concise, and user-focused. "
-# #         "It is resilient to ambiguous inputs, gracefully handles errors, "
-# #         "and scales effectively to thousands of concurrent users."
-# #     ),
-# #     constraints=[
-# #         "Maintain a friendly, approachable, and professional tone.",
-# #         "Avoid hallucination—admit uncertainty when knowledge is limited.",
-# #         "Respond within 2–3 seconds to maintain real-time feel.",
-# #         "Ensure scalability: responses must be lightweight and efficient.",
-# #         "Comply with ethical and safety guidelines at all times."
-# #     ],
-# #     verbose=True,
-# #     allow_delegation=False,# you can later add web search, db connectors, APIs, etc.
-# #     memory=True,
-# #     llm=llm
-# # )
-
-# Fetcher = Agent(
-#     role="Intelligent Blog URL Fetcher",
-#     goal=(
-#         "Retrieve the most relevant blog URL from the vector database "
-#         "based on user queries. Always prioritize accuracy and clarity. "
-#         "When a query is received: first use URL_Fetcher to search the database, "
-#         "then if a suitable URL is found, use Webpage_Opener to fetch and present it."
-#         "Do not made up if you can't find relevant url"
-#     ),
-#     backstory=(
-#         "You are an expert at locating high-quality blog content from a curated "
-#         "vector database. You specialize in understanding user intent, extracting "
-#         "the right URL, and ensuring users get the most relevant resource. "
-#         "You follow a strict workflow: (1) Search via URL_Fetcher, "
-#         "(2) Extract and validate the URL, (3) Use Webpage_Opener to display the content."
-#     ),
-#     llm=llm,
-#     tools=[url_fetcher, webpage_opener],
-#     verbose=True,
-    
-    
-    
-# )
-
-
-# # Task for Fetcher Agent
-# fetch_blog_task = Task(
-#     description=(
-#         "Retrieve the most relevant blog URL from the vector database based on the user's query.{query} "
-#         "Use url_fetcher to search and Webpage_Opener to open the most relevant URL."
-#     ),
-#     expected_output="A working blog URL with a brief explanation of its relevance.",
-#     agent=Fetcher
-# )
-
-# # Manager's hierarchical task
-
-# crew=Crew(
-#     agents=[Fetcher],
-#     tasks=[fetch_blog_task],
-#     verbose=True,
-#     memory=True,
-# )
-    
-# FIRECRAWL_API_KEY="fc-ec73eb1678be49b8a4d19ad696818c74"
-from crewai import Agent,Crew,Task,LLM
-# from crewai_tools import SerperDevTool
-# from crewai_tools import (FirecrawlSearchTool,SerperDevTool)
-from pydantic import BaseModel
-# tool = FirecrawlSearchTool(api_key="fc-ec73eb1678be49b8a4d19ad696818c74",config={"limit": 5})
-# result=tool.run(query="Find me relevant blogs on child screen timing from parentune ")
-# print(result)
-# web_search=SerperDevTool()
-# url_fetcher_agent=Agent(
-#     goal:'Crawl through web'
-# )
 
 llm=LLM(model='gpt-4.1')
 class VerifiedURL(BaseModel):
     best_url: str
     description:str
+    
+firecrawl = Firecrawl(api_key="fc-ec73eb1678be49b8a4d19ad696818c74")
 url_fetcher_tool=FirecrawlSearchTool(api_key="fc-ec73eb1678be49b8a4d19ad696818c74",limit= 2)
 url_fetcher_agent = Agent(
     role="Web URL Collector",
@@ -252,41 +82,6 @@ crew=Crew(
     memory=True,
     verbose=True
 )
-# class CalendarEvent(BaseModel):
-#     should_pass: bool =Field(alias="pass")
-# while True:
-#     query=input('User: ')
-#     if query=='exit':
-#         break
-#     else:
-#         history.append({"role":"user","content":query})
-#         response = client.responses.parse(
-#             model="gpt-4.1",
-#             input=[
-# {"role": "system", "content": (
-#     "You are a classification agent.\n"
-#     "Your only job is to decide if the user explicitly wants you to search for a blog related to their query.\n\n"
-#     "Output format must strictly be JSON like this:\n"
-#     "{ \"pass\": true } or { \"pass\": false }\n\n"
-#     "Rules:\n"
-#     "- If the user request clearly indicates they want you to search for a blog/article, return {\"pass\": true}.\n"
-#     "- Otherwise, return {\"pass\": false}.\n"
-#     "- If the user’s query is unrelated or ambiguous, default to {\"pass\": false}."
-# )},
-#                 *history
-#             ],
-#             text_format=CalendarEvent
-#         )
-
-#         event = response.output_parsed
-#         print(f'Bot: {event}')
-#         print(event.should_pass)
-#         history.append({"role":"assistant","content":str(event.should_pass)})
-#         if event.should_pass:
-#             result=crew.kickoff(inputs={"topic":query})
-#             console=Console()
-#             console.print(Markdown(result.raw))
-#             print(analyst.llm.model)
 client=OpenAI()
 tools = [
     {
@@ -385,19 +180,25 @@ def fetch_url_internal(query:str):
     result=app.query(f"Only return the 'url' and 'description' based on the user query which is '{query}'")
     return result
 
-from crewai_tools import FirecrawlScrapeWebsiteTool
+tool = FirecrawlSearchTool()
+def web_search(query: str):
+    """
+   Crawl websites with given search query using FirecrawlScrapeWebsiteTool.
+    """
+    tool = FirecrawlSearchTool(api_key="fc-ec73eb1678be49b8a4d19ad696818c74",limit=2)
+    result=tool.run(query)
+    print(result)
+    data = [{"url": item.url,"title": item.title} for item in result.web]        
+    return str(data)
 
-# Initialize the scraping tool
-tool = FirecrawlScrapeWebsiteTool()
-
-def web_search(url: str):
+def webcontent(url:str):
     """
     Scrapes the given URL using FirecrawlScrapeWebsiteTool.
-    """
-    result = tool.run(url=url)
-    return result.__dict__['markdown']
+    """    
+    doc = firecrawl.scrape(url, formats=["markdown", "html"])
+    return doc.markdown
 
-def run_agent_query(user_query: str, current_url: str = None) -> str:
+def run_agent_query_backend(user_query: str, current_url: str = None) -> str:
     history.append({"role":"user","content":f'User asked at {now}: {user_query}'})
     if current_url:
         history.append({"role":"assistant","content":f'User is currently on page: {current_url}. '})
@@ -411,9 +212,9 @@ def run_agent_query(user_query: str, current_url: str = None) -> str:
                 "role": "developer",
                 "content": (
                     "You are an Agentic WebPilot system doesn’t just navigate within a website—it "
-"intelligently takes you to the exact content you need, whether it’s on the "
-"same site or across other websites, all from a simple prompt—while the AI "
-"chatbot stays with you to answer any query within that website’s content. "
+                    "intelligently takes you to the exact content you need, whether it’s on the "
+                    "same site or across other websites, all from a simple prompt—while the AI "
+                    "chatbot stays with you to answer any query within that website’s content. "
                     "with access to three tools: `internal_search`, `decider`, and `web_search`.\n\n"
                     "Rules:\n"
                     "- You will ALWAYS have access to the current URL the user is on.\n"
@@ -436,7 +237,7 @@ def run_agent_query(user_query: str, current_url: str = None) -> str:
     )
     assistant_message = response.choices[0].message.content
     choice = response.choices[0]
-    print(f'Bot: {assistant_message}')
+    print(f'Bot_MAIN: {assistant_message}')
     if choice.finish_reason == "tool_calls":
         for tool_call in choice.message.tool_calls:
             tool_name = tool_call.function.name
@@ -446,7 +247,8 @@ def run_agent_query(user_query: str, current_url: str = None) -> str:
             inputs=[]
             internal_query=args.get('query',"")
             result=fetch_url_internal(internal_query)
-            print(f'Bot: {result}')
+            print(f'BOT_RESULT_INTENAL_SEARCH_TOOL: {result}')
+            print(f'Type of the result {type(result)}')
     
             inputs.append({
         "type": "function_call_output",
@@ -460,27 +262,60 @@ def run_agent_query(user_query: str, current_url: str = None) -> str:
                         1. Start with a short line saying that you have brought them to this page.
                         2. Provide a concise description of what this page is about (in simple words).
                         3. Offer help by saying: 'If you need any clarification or help in understanding something from here, I will assist you.'
-
+                        4. If `No relevant results found` or similar then take the user to `http://localhost:3000/` which is the homepage, in description write the inconveniences for that and let the user know that you take them to the home page
                         Keep the description short, clear, and user-friendly.
                         """,
                         input=result,
                         text_format=VerifiedURL
                     )
-            print(f'Bot: {new_response.output_text}')
+            print(f'BOT_INTERNAL_SEARCH_RESPONSE: {new_response.output_text}')
             history.append({"role":'assistant','content':f"Generated response at {now} {new_response.output_parsed.description}"})
             return new_response.output_text
-            
+# -------------------------------
+# CrewAI option Starts
+# -------------------------------            
+        # if tool_name=='decider':
+        #     decider_query=args.get('query',"")
+        #     result=crew.kickoff(inputs={'query':decider_query})
+        #     print(f'Bot: {result.raw}')
+        #     parsed_result=json.loads(result.raw)
+        #     history.append({"role":'assistant','content':f"Generated response at {now} {parsed_result['description']}"})
+        #     return result.raw
+# -------------------------------
+# CrewAI option Ends
+# -------------------------------       
+        
         if tool_name=='decider':
-            decider_query=args.get('query',"")
-            result=crew.kickoff(inputs={'query':decider_query})
-            print(f'Bot: {result.raw}')
-            parsed_result=json.loads(result.raw)
-            history.append({"role":'assistant','content':f"Generated response at {now} {parsed_result['description']}"})
-            return result.raw
+            internal_query=args.get('query',"")
+            result=web_search(internal_query)
+            print(f'BOT_DECIDIER_TOOL: {result}')
+            print(f'Type of the result {type(result)}')
+            new_response=client.responses.parse(
+                        model="gpt-4.1",
+                        instructions="""
+                        You are guiding the user through different pages.
+                        For each page:
+                        1. Start with a short line saying that you have brought them to this page.
+                        2. Provide a concise description of what this page is about (in simple words).
+                        3. Offer help by saying: 'If you need any clarification or help in understanding something from here, I will assist you.'
+                        4. If `No relevant results found` or similar then take the user to `http://localhost:3000/` which is the homepage, in description write the inconveniences for that and let the user know that you take them to the home page
+                        Keep the description short, clear, and user-friendly.
+                        Also for
+                        "You are a strict evaluator of search results. "
+                        "You carefully compare the query with the candidate URLs and their snippets, "
+                        "and always select the one that best matches the user's intent."
+                        """,
+                        input=result,
+                        text_format=VerifiedURL
+                    )
+            print(f'BOT_DECIDIER_RESPONSE: {new_response.output_text}')
+            history.append({"role":'assistant','content':f"Generated response at {now} {new_response.output_parsed.description}"})
+            return new_response.output_text        
         if tool_name=='web_search':
             inputs=[]
             searching=args.get('url',"")
-            result=web_search(searching)
+            result=webcontent(searching)
+            print(f"BOT WEB SEARCH RESULT {result}")
             inputs.append({"role":'assistant','content':f"Generated response at {now} {result}"})
             history.append({"role":'system','content':f"Generated response at {now} You have the content {result} on {searching} now you can answer"})
             inputs.append({"role":"user","content":f'User asked at {now}: {user_query}'})
@@ -493,7 +328,7 @@ def run_agent_query(user_query: str, current_url: str = None) -> str:
                         """,
                         input=inputs
                     )
-            print(f'Bot: {new_response.output_text}')
+            print(f'BOT_WEB_SEARCH_RESPONSE: {new_response.output_text}')
             history.append({"role":'assistant','content':f"Generated response at {now} {new_response.output_text}"})
             return new_response.output_text
             
@@ -510,7 +345,7 @@ if __name__ == "__main__":
     while True:
         query=input('User: ')
         if query!='exit':
-            result = run_agent_query(query)
+            result = run_agent_query_backend(query)
             print(f'Bot: {result}')
         else:
             break

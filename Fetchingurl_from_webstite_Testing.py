@@ -1,8 +1,8 @@
-import requests
+# import requests
 
-url = "https://www.theguradian.com//robots.txt"
-resp = requests.get(url)
-print(resp.text)
+# url = "https://www.theguradian.com//robots.txt"
+# resp = requests.get(url)
+# print(resp.text)
 
 
 # import requests
@@ -59,63 +59,67 @@ print(resp.text)
 #     print(url)
 
 
-import webbrowser
-webbrowser.open("https://www.parentune.com/baby-names")
-print(f'Hello')
+# import webbrowser
+# webbrowser.open("https://www.parentune.com/baby-names")
+# print(f'Hello')
 
 
+# -------------------------------
+# Parentune URL Fetching Starts
+# -------------------------------
+
+import requests
+import xml.etree.ElementTree as ET
+
+url = "https://www.parentune.com/sitemap-index.xml"
+
+headers = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                  "AppleWebKit/537.36 (KHTML, like Gecko) "
+                  "Chrome/120.0.0.0 Safari/537.36"
+}
+
+resp = requests.get(url, headers=headers)
 
 
-# import requests
-# import xml.etree.ElementTree as ET
+# Ensure we actually got XML back
+print("response",resp)
+if resp.status_code != 200:
+    print(f"Error: HTTP {resp.status_code}")
+    print(resp.text[:500])  # show first part of response
+    exit()
 
-# url = "https://www.parentune.com/sitemap.xml"
+try:
+    print('thissss ',resp)
+    root = ET.fromstring(resp.content)
+except ET.ParseError as e:
+    print("ParseError:", e)
+    print("Response was:")
+    print(resp.text[:500])  # show snippet of what we actually got
+    exit()
 
-# headers = {
-#     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-#                   "AppleWebKit/537.36 (KHTML, like Gecko) "
-#                   "Chrome/120.0.0.0 Safari/537.36"
-# }
+namespaces = {"ns": "http://www.sitemaps.org/schemas/sitemap/0.9"}
 
-# resp = requests.get(url, headers=headers)
+sitemaps = [s.text for s in root.findall(".//ns:loc", namespaces)]
+print("Found sitemaps:", sitemaps)
 
+all_urls = []
+for sm_url in sitemaps:
+    resp = requests.get(sm_url)
+    try:
+        root = ET.fromstring(resp.content)
+    except ET.ParseError:
+        print(f"Skipping non-XML sitemap: {sm_url}")
+        continue
+    urls = [loc.text for loc in root.findall(".//ns:loc", namespaces)]
+    all_urls.extend(urls)
 
-# # Ensure we actually got XML back
-# print("response",resp)
-# if resp.status_code != 200:
-#     print(f"Error: HTTP {resp.status_code}")
-#     print(resp.text[:500])  # show first part of response
-#     exit()
-
-# try:
-#     print('thissss ',resp)
-#     root = ET.fromstring(resp.content)
-# except ET.ParseError as e:
-#     print("ParseError:", e)
-#     print("Response was:")
-#     print(resp.text[:500])  # show snippet of what we actually got
-#     exit()
-
-# namespaces = {"ns": "http://www.sitemaps.org/schemas/sitemap/0.9"}
-
-# sitemaps = [s.text for s in root.findall(".//ns:loc", namespaces)]
-# print("Found sitemaps:", sitemaps)
-
-# all_urls = []
-# for sm_url in sitemaps:
-#     resp = requests.get(sm_url)
-#     try:
-#         root = ET.fromstring(resp.content)
-#     except ET.ParseError:
-#         print(f"Skipping non-XML sitemap: {sm_url}")
-#         continue
-#     urls = [loc.text for loc in root.findall(".//ns:loc", namespaces)]
-#     all_urls.extend(urls)
-
-# print("Total URLs found:", len(all_urls))
-# for u in all_urls[:20]:
-#     print(u)
-
+print("Total URLs found:", len(all_urls))
+for u in all_urls[:20]:
+    print(u)
+# -------------------------------
+# Parentune URL Fetching Ends
+# -------------------------------
 
 # import requests
 # import xml.etree.ElementTree as ET

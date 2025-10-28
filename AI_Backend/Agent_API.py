@@ -1,0 +1,32 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+from Agent_Backend import run_agent_query_backend
+
+app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+class ChatRequest(BaseModel):
+    message: str
+    current_url: str = None
+
+class ChatResponse(BaseModel):
+    text: str
+
+@app.post("/chat", response_model=ChatResponse)
+def chat(req: ChatRequest):
+    result = run_agent_query_backend(req.message, req.current_url)
+    return ChatResponse(text=result)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="127.0.0.1", port=8001)
+
+
