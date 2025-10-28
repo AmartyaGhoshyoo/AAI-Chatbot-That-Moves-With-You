@@ -1,8 +1,8 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { Suspense, useMemo, useState } from "react";
 
-export default function ReaderPage() {
+function ReaderContent() {
   const params = useSearchParams();
   const raw = params.get("url") || "";
   const url = useMemo(() => {
@@ -70,4 +70,14 @@ export default function ReaderPage() {
   );
 }
 
-
+export default function ReaderPage() {
+  return (
+    <Suspense fallback={
+      <main className="h-screen w-screen bg-black text-white flex items-center justify-center">
+        <div className="opacity-70">Loading...</div>
+      </main>
+    }>
+      <ReaderContent />
+    </Suspense>
+  );
+}
