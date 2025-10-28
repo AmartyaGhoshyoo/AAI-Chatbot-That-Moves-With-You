@@ -1,12 +1,10 @@
 "use client";
-
-import { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 
-function ReaderContent() {
+export default function ReaderPage() {
   const params = useSearchParams();
   const raw = params.get("url") || "";
-
   const url = useMemo(() => {
     try {
       return decodeURIComponent(raw);
@@ -48,16 +46,13 @@ function ReaderContent() {
           </div>
         )}
       </div>
-
       <div className="flex-1">
         {url ? (
           failed ? (
             <div className="h-full w-full flex items-center justify-center text-center px-6">
               <div>
                 <div className="mb-3 text-lg">We couldn't embed this site.</div>
-                <div className="opacity-70">
-                  Use the buttons above to open it directly.
-                </div>
+                <div className="opacity-70">Use the buttons above to open it directly.</div>
               </div>
             </div>
           ) : (
@@ -68,19 +63,11 @@ function ReaderContent() {
             />
           )
         ) : (
-          <div className="flex h-full items-center justify-center">
-            No URL provided.
-          </div>
+          <div className="flex h-full items-center justify-center">No URL provided.</div>
         )}
       </div>
     </main>
   );
 }
 
-export default function ReaderPage() {
-  return (
-    <Suspense fallback={<div className="text-center mt-20 text-white">Loading...</div>}>
-      <ReaderContent />
-    </Suspense>
-  );
-}
+

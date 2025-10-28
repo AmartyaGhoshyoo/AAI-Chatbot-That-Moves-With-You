@@ -280,7 +280,7 @@ const ChatForm = () => {
               rawUrl = window.location.href; // already raw
             }
             
-            const res = await fetch("https://gpt-qa.parentune.com/chat", {
+            const res = await fetch("http://127.0.0.1:8001/chat", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ 
