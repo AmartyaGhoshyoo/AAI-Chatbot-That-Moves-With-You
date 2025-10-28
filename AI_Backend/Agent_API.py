@@ -20,7 +20,7 @@ class ChatRequest(BaseModel):
 class ChatResponse(BaseModel):
     text: str
 
-@app.post("/chat", response_model=ChatResponse)
+@app.post("/chat/", response_model=ChatResponse)
 def chat(req: ChatRequest):
     result = run_agent_query_backend(req.message, req.current_url)
     return ChatResponse(text=result)
