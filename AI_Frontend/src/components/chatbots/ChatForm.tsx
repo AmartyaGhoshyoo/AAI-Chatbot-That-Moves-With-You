@@ -13,7 +13,7 @@ interface Message {
     type: 'user' | 'bot';
 }
 
-// Hook for localStorage management
+// Hook for 1Storage management
 const useLocalStorage = (key: string) => {
     const loadMessages = (): Message[] => {
         try {
@@ -280,7 +280,7 @@ const ChatForm = () => {
               rawUrl = window.location.href; // already raw
             }
             
-            const res = await fetch("http://127.0.0.1:8001/chat", {
+            const res = await fetch("https://gpt-prod.parentune.com/chat", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ 

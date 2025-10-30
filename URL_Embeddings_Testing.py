@@ -30,7 +30,7 @@ config = {
     },
 }
 app=App.from_config(config=config)
-# app.reset()
+app.reset()
 app.add('urls_merged.csv', data_type='csv')
 
 result=app.query(f"Fetch the url only on user query that is 'take me to the quickstart'")

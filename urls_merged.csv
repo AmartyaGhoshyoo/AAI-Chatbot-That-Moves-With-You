@@ -1,39 +1,39 @@
 url,description
-http://localhost:3000/,Home page
-http://localhost:3000/docs,Documentation index
-http://localhost:3000/docs/[slug],Dynamic docs page (pattern)
-http://localhost:3000/reader,In-app reader with iframe and fallback
-http://localhost:3000/#top,Scroll to top of home page
-http://localhost:3000/#features,Home page features section
-http://localhost:3000/#showcase,Home page showcase section
-http://localhost:3000/#pricing,Home page pricing section
-http://localhost:3000/#faq,Home page FAQ section
-http://localhost:3000/docs/getting-started,Getting Started guide
-http://localhost:3000/docs/architecture-overview,Architecture overview
-http://localhost:3000/docs/api-quickstart,API quickstart
-http://localhost:3000/docs/auth-and-sso,Authentication and SSO
-http://localhost:3000/docs/webhooks,Webhooks guide
-http://localhost:3000/docs/rate-limiting,Rate limiting
-http://localhost:3000/docs/error-handling,Error handling
-http://localhost:3000/docs/observability,Observability
-http://localhost:3000/docs/logging,Logging
-http://localhost:3000/docs/monitoring-alerts,Monitoring and alerts
-http://localhost:3000/docs/security-hardening,Security hardening
-http://localhost:3000/docs/gdpr-data-retention,GDPR and data retention
-http://localhost:3000/docs/backup-disaster-recovery,Backup and disaster recovery
-http://localhost:3000/docs/performance-tuning,Performance tuning
-http://localhost:3000/docs/caching-strategies,Caching strategies
-http://localhost:3000/docs/database-migrations,Database migrations
-http://localhost:3000/docs/testing-strategy,Testing strategy
-http://localhost:3000/docs/ci-cd-pipeline,CI/CD pipeline
-http://localhost:3000/docs/feature-flags,Feature flags
-http://localhost:3000/docs/accessibility,Accessibility (a11y)
-http://localhost:3000/docs/internationalization,Internationalization (i18n)
-http://localhost:3000/docs/seo-basics,SEO basics
-http://localhost:3000/docs/content-delivery,Content delivery & CDN
-http://localhost:3000/docs/mobile-ux,Mobile UX patterns
-http://localhost:3000/docs/email-deliverability,Email deliverability
-http://localhost:3000/docs/billing-subscriptions,Billing & subscriptions
-http://localhost:3000/docs/support-slas,Support & SLAs
-http://localhost:3000/docs/changelog-release-notes,Changelog & release notes
-http://localhost:3000/docs/roadmap-rfcs,Roadmap & RFCs
+https://aai-chatbot-that-moves-with-you.vercel.app/,Home page
+https://aai-chatbot-that-moves-with-you.vercel.app/docs,Documentation index
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/[slug],Dynamic docs page (pattern)
+https://aai-chatbot-that-moves-with-you.vercel.app/reader,In-app reader with iframe and fallback
+https://aai-chatbot-that-moves-with-you.vercel.app/#top,Scroll to top of home page
+https://aai-chatbot-that-moves-with-you.vercel.app/#features,Home page features section
+https://aai-chatbot-that-moves-with-you.vercel.app/#showcase,Home page showcase section
+https://aai-chatbot-that-moves-with-you.vercel.app/#pricing,Home page pricing section
+https://aai-chatbot-that-moves-with-you.vercel.app/#faq,Home page FAQ section
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/getting-started,Getting Started guide
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/architecture-overview,Architecture overview
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/api-quickstart,API quickstart
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/auth-and-sso,Authentication and SSO
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/webhooks,Webhooks guide
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/rate-limiting,Rate limiting
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/error-handling,Error handling
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/observability,Observability
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/logging,Logging
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/monitoring-alerts,Monitoring and alerts
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/security-hardening,Security hardening
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/gdpr-data-retention,GDPR and data retention
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/backup-disaster-recovery,Backup and disaster recovery
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/performance-tuning,Performance tuning
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/caching-strategies,Caching strategies
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/database-migrations,Database migrations
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/testing-strategy,Testing strategy
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/ci-cd-pipeline,CI/CD pipeline
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/feature-flags,Feature flags
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/accessibility,Accessibility (a11y)
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/internationalization,Internationalization (i18n)
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/seo-basics,SEO basics
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/content-delivery,Content delivery & CDN
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/mobile-ux,Mobile UX patterns
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/email-deliverability,Email deliverability
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/billing-subscriptions,Billing & subscriptions
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/support-slas,Support & SLAs
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/changelog-release-notes,Changelog & release notes
+https://aai-chatbot-that-moves-with-you.vercel.app/docs/roadmap-rfcs,Roadmap & RFCs
