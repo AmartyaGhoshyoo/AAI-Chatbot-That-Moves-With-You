@@ -280,7 +280,7 @@ const ChatForm = () => {
               rawUrl = window.location.href; // already raw
             }
             
-            const res = await fetch("https://gpt-qa.parentune.com/chat", {
+            const res = await fetch("https://gpt-qa.parentune.com/chat/agentic_webpilot/", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ 
